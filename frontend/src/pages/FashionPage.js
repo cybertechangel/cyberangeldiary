@@ -8,6 +8,7 @@ const FashionPage = () => {
     useEffect(() => {
         articleService.getArticlesByCategory('fashion')
         .then(response => {
+
             setArticles(response.data);
         })
         .catch(error => {
@@ -17,21 +18,22 @@ const FashionPage = () => {
 
     return (
         <div className="page-container background-grid">
-            <section className="hero-section" style={{ backgroundImage: `url('/img/hero-homepage.gif')` }}>
-                <h2>Fashion Articles</h2>
+            <section
+                className="hero-section" style={{ backgroundImage: `url('/img/hero-homepage.gif')` }}>
+                    <h2>Fashion Articles</h2>
             </section>
+            
             {articles.length > 0 ? (
                 <div>
                     {articles.map(article => (
                         <ArticleCard key={article.id} article={article} />
                     ))}
                 </div>
-            ) : (
+                ) : (
                 <p>No fashion articles to display at the moment.</p>
-            )}
+                )}
         </div>
     );
 };
-
 
 export default FashionPage;
