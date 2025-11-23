@@ -1,26 +1,21 @@
 import axios from 'axios';
+const baseURL = process.env.REACT_APP_API_URL || '/api';
 
-// Crée une instance d'Axios
 const api = axios.create({
-  baseURL: '/api' // Le proxy s'occupera du reste
+    baseURL: baseURL
 });
 
-/* INTERCEPTEUR :
-  À chaque requête qui part, on vérifie si on a un token.
-  Si oui, on l'ajoute au header 'Authorization'.
-  C'est ce qui nous permettra d'accéder aux routes protégées (POST, DELETE).
-*/
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
 );
 
 export default api;
