@@ -120,6 +120,7 @@ main {
     width: 600px;
     height: auto;
     margin-bottom: 20px;
+    word-break: break-word;
 }
 
 .article-card h2 {
