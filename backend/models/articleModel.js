@@ -10,7 +10,7 @@ const articleModel = {
     getByCategory: async (category) => {
         const sql = 'SELECT * FROM articles WHERE category = ? ORDER BY created_at DESC';
         const [rows] = await db.query(sql, [category]);
-        return rows;
+        return rows; 
     },
 
     create: async ({ title, content, imageUrl, category }) => {
