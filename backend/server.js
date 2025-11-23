@@ -1,12 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import db from './config/db.js';
 
+dotenv.config();
+
+import db from './config/db.js';
 import articleRoutes from './routes/articleRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 
-dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -20,7 +21,7 @@ db.getConnection()
     })
     .catch(err => {
         console.error('Database connection error:', err.message);
-        process.exit(1);
+       
     });
 
 app.get('/', (req, res) => {
