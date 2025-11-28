@@ -5,7 +5,7 @@ const getAllArticles = () => {
 };
 
 const getArticlesByCategory = (category, page = 1) => {
-    return api.get(`/articles/category/${category}?page=${page}&limit=6`);
+    return api.get(`/articles/category/${category}?page=${page}&limit=4`);
 };
 
 const createArticle = (articleData) => {
