@@ -1,24 +1,16 @@
-// hashAdmin.js
 import bcrypt from 'bcryptjs';
 
-// Vous décidez du mot de passe ici
-const password = '@AthenaAdmin1!'; 
+const password = '@AthenaAdmin1!';
 
 const hashPassword = async () => {
   try {
-    // 👇 CETTE LIGNE MANQUAIT 👇
-    const salt = await bcrypt.genSalt(10); 
-
-    // Maintenant, 'salt' existe et peut être utilisé ici
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    
-    // Il affiche juste le résultat
-    console.log('--- COPIEZ CE HASH ---');
+    console.log('--- COPY THIS HASH ---');
     console.log(hashedPassword);
-    console.log('-------------------------');
-
+    console.log('------------------------');
   } catch (err) {
-    console.error("Erreur lors du hashage:", err);
+    console.error('Error hashing:', err);
   }
 };
 

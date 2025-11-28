@@ -1,31 +1,26 @@
 import api from './api';
 
-// GET (Public)
 const getAllArticles = () => {
-  return api.get('/articles');
+    return api.get('/articles');
 };
 
-// GET (Public)
-const getArticlesByCategory = (category) => {
-  return api.get(`/articles/category/${category}`);
+const getArticlesByCategory = (category, page = 1) => {
+    return api.get(`/articles/category/${category}?page=${page}&limit=6`);
 };
 
-// POST (Protégé)
 const createArticle = (articleData) => {
-  // articleData doit être : { title, content, imageUrl, category }
-  return api.post('/articles', articleData);
+    return api.post('/articles', articleData);
 };
 
-// DELETE (Protégé)
 const deleteArticle = (id) => {
-  return api.delete(`/articles/${id}`);
+    return api.delete(`/articles/${id}`);
 };
 
 const articleService = {
-  getAllArticles,
-  getArticlesByCategory,
-  createArticle,
-  deleteArticle
+    getAllArticles,
+    getArticlesByCategory,
+    createArticle,
+    deleteArticle
 };
 
 

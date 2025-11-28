@@ -1,6 +1,6 @@
 # CyberAngelDiary - Blog Fullstack
 
-Bienvenue sur le dépôt de CyberAngelDiary, un blog personnel fullstack aux thématiques "Fashion" et "Beauty", inspiré par l'esthétique Y2K/Tumblr.
+CyberAngelDiary est un blog personnel fullstack aux thématiques "Fashion" et "Beauty", inspiré par l'esthétique Y2K/Tumblr.
 
 Ce projet a été construit avec une architecture moderne séparant le backend (API REST) et le frontend (Application React). Il permet aux visiteurs de consulter des articles et à un administrateur unique de gérer le contenu via un tableau de bord sécurisé.
 
