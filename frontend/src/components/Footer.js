@@ -15,6 +15,7 @@ const Footer = () => {
             <i className="fab fa-tumblr fa-beat"></i>
             </a>
         </div>
+        <p>&copy; 2025 CyberAngelDiary. All rights reserved.</p>
         </footer>
     );
 };
