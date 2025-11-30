@@ -830,7 +830,7 @@ npm run build    # Crée le build optimisé dans /build
 
 ---
 
-## 🌐 Déploiement
+## ⊹ Déploiement
 
 ### Backend (Railway/Render/Heroku)
 
