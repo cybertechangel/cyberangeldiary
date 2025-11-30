@@ -12,28 +12,49 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: 'https://cyberangeldiary.vercel.app',
-  credentials: true
+    origin: process.env.FRONTEND_URL || 'https://cyberangeldiary.vercel.app',
+    credentials: true
 }));
+
 app.use(express.json());
 
 db.getConnection()
     .then(connection => {
-        console.log('Connected to MySQL database!');
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Connected to MySQL database');
+        }
         connection.release();
     })
     .catch(err => {
         console.error('Database connection error:', err.message);
-       
+        process.exit(1);
     });
 
 app.get('/', (req, res) => {
-    res.send('Fullstack Blog API is running...');
+    res.json({ 
+        status: 'active',
+        message: 'CyberAngelDiary API is running',
+        version: '1.0.0'
+    });
 });
 
 app.use('/api/articles', articleRoutes);
 app.use('/api/auth', authRoutes);
 
+app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
+
+app.use((err, req, res, next) => {
+    console.error('Server error:', err.stack);
+    res.status(500).json({ 
+        message: 'Internal server error',
+        ...(process.env.NODE_ENV !== 'production' && { error: err.message })
+    });
+});
+
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`Server running on port ${PORT}`);
+    }
 });

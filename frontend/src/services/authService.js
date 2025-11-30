@@ -5,9 +5,7 @@ const login = (username, password) => {
     username,
     password
   }).then(response => {
-    // Si la requête réussit (login OK)
     if (response.data.token) {
-      // On stocke le token dans le localStorage
       localStorage.setItem('token', response.data.token);
     }
     return response.data;
