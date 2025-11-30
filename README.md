@@ -21,7 +21,7 @@
 
 ## ⊹ Présentation du Projet
 
-**CyberAngelDiary** est un blog personnel fullstack aux thématiques "Fashion" et "Beauty", inspiré par l'esthétique Y2K/Tumblr. Le projet implémente une architecture moderne en trois couches (Frontend, Backend, Base de données) permettant la gestion et la consultation d'articles de blog.
+**CyberAngelDiary** est un blog personnel fullstack aux thématiques "Fashion" et "Beauty", inspiré par l'esthétique Y2K/Tumblr. Le projet implémente une **architecture micro-services moderne en trois couches** (Frontend, Backend, Base de données) avec déploiement distribué, permettant la gestion et la consultation d'articles de blog.
 
 ### Objectifs
 
@@ -51,37 +51,50 @@
 
 ## ⊹ Architecture Globale
 
-Le projet suit une architecture **client-serveur en trois tiers** séparant clairement les responsabilités :
+Le projet suit une architecture **micro-services client-serveur en trois tiers** avec déploiement distribué séparant clairement les responsabilités :
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      ARCHITECTURE GLOBALE                    │
+│              ARCHITECTURE GLOBALE (DISTRIBUÉE)               │
 └─────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────┐
 │   CLIENT (Browser)   │  ← Interface utilisateur
-│   React Application  │
-│   Port: 3000         │
+│   React Application  │  ← 🚀 Déployé sur VERCEL
+│   Port: 3000 (dev)   │
 └──────────┬───────────┘
            │
-           │ HTTP/HTTPS Requests
+           │ HTTPS Requests
            │ (REST API Calls)
            ▼
 ┌──────────────────────┐
 │   BACKEND SERVER     │  ← Logique métier
-│   Node.js + Express  │
+│   Node.js + Express  │  ← 🚂 Déployé sur RAILWAY
 │   Port: 5000         │
 └──────────┬───────────┘
            │
            │ SQL Queries
-           │ (mysql2)
+           │ (mysql2 - Connexion SSL)
            ▼
 ┌──────────────────────┐
 │   BASE DE DONNÉES    │  ← Stockage des données
-│   MySQL              │
-│   Port: 3306         │
+│   MySQL 8+           │  ← 🚂 Hébergé sur RAILWAY
+│   Port: 3306         │     (Même projet que Backend)
 └──────────────────────┘
 ```
+
+### Architecture Micro-services
+
+L'application utilise une **architecture micro-services découplée** :
+- **Frontend** (Vercel) : Service client indépendant, déployé sur CDN global
+- **Backend** (Railway) : Service API REST isolé avec auto-scaling
+- **Base de Données** (Railway) : Service de persistance dédié avec backups automatiques
+
+**Avantages :**
+- ✅ Scalabilité indépendante de chaque service
+- ✅ Déploiements sans interruption (zero-downtime)
+- ✅ Isolation des pannes (fault tolerance)
+- ✅ Optimisation des coûts (scaling ciblé)
 
 ### Flux de Données
 
@@ -325,12 +338,12 @@ Si absent → 401 Unauthorized
 ### Variables d'Environnement (.env)
 
 ```bash
-# Base de données
-DB_HOST=your-mysql-host
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_NAME=cyberangeldiary
-DB_PORT=3306
+# Base de données Railway (Public Network)
+DB_HOST=containers-us-west-xxx.railway.app
+DB_USER=root
+DB_PASSWORD=VotreMotDePasseRailway
+DB_NAME=railway
+DB_PORT=7543
 
 # JWT Secret (généré aléatoirement)
 JWT_SECRET=your-super-secret-key-here
@@ -338,6 +351,8 @@ JWT_SECRET=your-super-secret-key-here
 # Port serveur
 PORT=5000
 ```
+
+**Note** : Les credentials de connexion Railway se trouvent dans l'onglet **"Connect → Public Network"** de votre service MySQL.
 
 ---
 
@@ -524,7 +539,7 @@ CREATE TABLE admins (
 **Description :**
 - Stocke les administrateurs du blog (un seul admin dans ce projet)
 - Le mot de passe est hashé avec bcrypt (10 rounds)
-- Utilisation d'un script `hashAdmin.js` pour générer le hash initial
+- Création via requête SQL manuelle avec hash pré-généré
 
 #### Table : **articles**
 ```sql
@@ -705,14 +720,28 @@ cd cyberangeldiary
 
 ### Étape 2 : Configuration de la Base de Données
 
-#### 2.1 Créer la Base de Données
-```sql
-CREATE DATABASE cyberangeldiary;
-USE cyberangeldiary;
-```
+#### 2.1 Connexion à Railway MySQL
+
+**Important** : En développement local, vous vous connectez **directement à la base de données Railway** (pas de MySQL local requis).
+
+1. Aller sur votre projet Railway
+2. Cliquer sur votre service MySQL
+3. Dans l'onglet "Connect", sélectionner **"Public Network"**
+4. Noter les credentials affichés :
+   - `MYSQL_HOST`
+   - `MYSQL_PORT`
+   - `MYSQL_USER`
+   - `MYSQL_PASSWORD`
+   - `MYSQL_DATABASE`
 
 #### 2.2 Créer les Tables
+
+Utiliser **phpMyAdmin** (déployé sur Railway) ou un client SQL (MySQL Workbench, DBeaver) pour exécuter :
+
 ```sql
+-- Sélectionner la base de données
+USE railway;  -- ou le nom de votre base
+
 -- Table admins
 CREATE TABLE admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -733,27 +762,26 @@ CREATE TABLE articles (
 ```
 
 #### 2.3 Créer l'Administrateur
+
+**Générer un hash bcrypt** en ligne sur [bcrypt-generator.com](https://bcrypt-generator.com/) ou via Node.js :
+
 ```bash
-cd backend
-
-# Créer un fichier hashAdmin.js
-cat > hashAdmin.js << 'EOF'
-import bcrypt from 'bcryptjs';
-
-const password = 'VotreMotDePasseSecurise';
-const salt = await bcrypt.genSalt(10);
-const hashedPassword = await bcrypt.hash(password, salt);
-console.log('Hashed Password:', hashedPassword);
-EOF
-
-# Exécuter le script
-node hashAdmin.js
+node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('VotreMotDePasse', 10).then(hash => console.log(hash));"
 ```
 
-Insérer le hash dans la base :
+**Insérer l'admin dans la base** (via phpMyAdmin ou client SQL) :
+
 ```sql
 INSERT INTO admins (username, password) 
-VALUES ('admin', 'le_hash_généré_ci-dessus');
+VALUES ('admin', '$2a$10$XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx');
+-- Remplacer le hash ci-dessus par celui généré
+```
+
+**Exemple avec hash réel** :
+```sql
+-- Mot de passe: MySecurePassword123
+INSERT INTO admins (username, password) 
+VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye/Iu8W0FJXTNHJqQgFoWjQ1xPJfXp8Y2');
 ```
 
 ### Étape 3 : Configuration Backend
@@ -764,16 +792,23 @@ npm install
 
 # Créer le fichier .env
 cat > .env << 'EOF'
-DB_HOST=localhost
+# Base de données Railway (Public Network)
+DB_HOST=containers-us-west-xxx.railway.app
 DB_USER=root
-DB_PASSWORD=votre_mot_de_passe_mysql
-DB_NAME=cyberangeldiary
-DB_PORT=3306
+DB_PASSWORD=VotreMotDePasseRailway
+DB_NAME=railway
+DB_PORT=7543
 
+# JWT Secret (généré aléatoirement)
 JWT_SECRET=votre_clé_secrète_jwt_aléatoire_longue
 PORT=5000
 EOF
 ```
+
+**Important** : 
+- Copier les credentials depuis l'onglet **"Connect → Public Network"** de votre service MySQL sur Railway
+- Le `DB_HOST` ressemble à `containers-us-west-xxx.railway.app`
+- Le `DB_PORT` n'est **PAS** 3306, mais un port aléatoire (ex: 7543, 6478...)
 
 **Générer un JWT_SECRET sécurisé :**
 ```bash
@@ -785,10 +820,29 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```bash
 cd ../frontend
 npm install
+```
 
-# Si nécessaire, ajuster l'URL de l'API dans src/services/api.js
-# Pour développement local :
-# baseURL: 'http://localhost:5000/api'
+**Configuration de l'API** :
+
+Pour le développement local, l'URL de l'API est configurée dans `src/services/api.js` :
+
+```javascript
+// Développement local (backend sur localhost)
+baseURL: 'http://localhost:5000/api'
+
+// Production (backend sur Railway)
+baseURL: 'https://votre-backend.up.railway.app/api'
+```
+
+Vous pouvez utiliser une variable d'environnement pour basculer automatiquement :
+
+```javascript
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 ```
 
 ### Étape 5 : Lancement de l'Application
@@ -826,31 +880,93 @@ npm run build    # Crée le build optimisé dans /build
 
 1. **Backend** : Ouvrir `http://localhost:5000` → Doit afficher "Fullstack Blog API is running..."
 2. **Frontend** : Ouvrir `http://localhost:3000` → Page d'accueil du blog
-3. **Admin** : Aller sur `http://localhost:3000/login` → Se connecter
+3. **Database** : Vérifier la connexion à Railway via les logs backend
+4. **Admin** : Aller sur `http://localhost:3000/login` → Se connecter
 
 ---
 
 ## ⊹ Déploiement
 
-### Backend (Railway/Render/Heroku)
+### Architecture de Déploiement
 
-#### Exemple : Déploiement sur Render
+```
+🌐 Frontend (Vercel)  →  🔗 API Calls  →  🚂 Backend (Railway)
+                                              ↓
+                                         🗄️ MySQL (Railway)
+```
 
-1. Créer un compte sur [Render.com](https://render.com)
-2. Créer un nouveau **Web Service**
-3. Connecter votre repository GitHub
-4. Configurer :
+### Backend + Base de Données (Railway)
+
+Railway héberge à la fois le backend Express et la base de données MySQL dans le **même projet**.
+
+#### Étape 1 : Créer un Compte Railway
+
+1. Aller sur [Railway.app](https://railway.app)
+2. Se connecter avec GitHub
+3. Créer un nouveau projet : **"New Project"**
+
+#### Étape 2 : Déployer MySQL
+
+1. Dans votre projet Railway, cliquer sur **"+ New"**
+2. Sélectionner **"Database → MySQL"**
+3. Railway crée automatiquement la base de données
+4. Noter les credentials dans l'onglet **"Variables"**
+
+#### Étape 3 : Créer les Tables et l'Admin
+
+1. Dans le service MySQL, cliquer sur **"Connect"**
+2. Installer **phpMyAdmin** (cliquer sur le bouton ou ajouter un service)
+3. Ouvrir phpMyAdmin et exécuter les requêtes SQL :
+
+```sql
+-- Créer les tables
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE articles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    imageUrl VARCHAR(500) NOT NULL,
+    category ENUM('fashion', 'beauty') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insérer l'administrateur (mot de passe pré-hashé avec bcrypt)
+INSERT INTO admins (username, password) 
+VALUES ('admin', '$2a$10$VotreHashBcryptGenerePrecedemment');
+```
+
+#### Étape 4 : Déployer le Backend Express
+
+1. Dans Railway, cliquer sur **"+ New → GitHub Repo"**
+2. Sélectionner votre repository `cyberangeldiary`
+3. Configurer le service :
    - **Root Directory** : `backend`
-   - **Build Command** : `npm install`
    - **Start Command** : `npm start`
-5. Ajouter les variables d'environnement dans le dashboard
-6. Déployer
+   - **Build Command** : `npm install`
 
-**URL obtenue :** `https://votre-app.onrender.com`
+4. Ajouter les **variables d'environnement** :
+```
+DB_HOST=containers-us-west-xxx.railway.app
+DB_USER=root
+DB_PASSWORD=xxx
+DB_NAME=railway
+DB_PORT=xxxx
+JWT_SECRET=votre_secret_jwt
+PORT=5000
+```
 
-### Frontend (Vercel/Netlify)
+5. Railway détecte automatiquement Node.js et déploie
+6. **URL obtenue** : `https://votre-backend.up.railway.app`
 
-#### Exemple : Déploiement sur Vercel
+### Frontend (Vercel)
+
+#### Déploiement via CLI
 
 ```bash
 cd frontend
@@ -865,34 +981,69 @@ vercel
 # - Set up and deploy? Yes
 # - Which scope? Votre compte
 # - Link to existing project? No
-# - Project name? cyberangeldiary-frontend
+# - Project name? cyberangeldiary
 # - Directory? ./
 # - Override settings? No
 ```
 
-**Après déploiement :**
-1. Noter l'URL frontend : `https://cyberangeldiary.vercel.app`
-2. Mettre à jour le CORS dans `backend/server.js` :
+#### Déploiement via Dashboard Vercel
+
+1. Aller sur [Vercel.com](https://vercel.com)
+2. Cliquer sur **"Add New → Project"**
+3. Importer votre repository GitHub
+4. Configurer :
+   - **Framework Preset** : Create React App
+   - **Root Directory** : `frontend`
+   - **Build Command** : `npm run build`
+   - **Output Directory** : `build`
+5. Déployer
+
+**URL obtenue** : `https://cyberangeldiary.vercel.app`
+
+### Configuration Post-Déploiement
+
+#### 1. Mettre à jour le CORS Backend
+
+Dans `backend/server.js`, autoriser l'URL Vercel :
+
 ```javascript
-cors({
-  origin: 'https://cyberangeldiary.vercel.app',
+app.use(cors({
+  origin: 'https://cyberangeldiary.vercel.app',  // URL de votre frontend Vercel
   credentials: true
-})
+}));
 ```
-3. Mettre à jour `baseURL` dans `frontend/src/services/api.js` :
+
+Redéployer le backend sur Railway.
+
+#### 2. Mettre à jour l'URL API Frontend
+
+Dans `frontend/src/services/api.js`, changer `baseURL` :
+
 ```javascript
-baseURL: 'https://votre-backend.onrender.com/api'
+const api = axios.create({
+  baseURL: 'https://votre-backend.up.railway.app/api',  // URL Railway
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 ```
 
-### Base de Données (PlanetScale/Railway/FreeMySQLHosting)
+Redéployer le frontend sur Vercel.
 
-#### Exemple : PlanetScale (MySQL Cloud)
+### Vérification du Déploiement
 
-1. Créer un compte sur [PlanetScale](https://planetscale.com)
-2. Créer une nouvelle database
-3. Obtenir les credentials de connexion
-4. Importer le schéma SQL via l'interface ou CLI
-5. Mettre à jour les variables d'environnement backend
+1. **Frontend** : Ouvrir `https://cyberangeldiary.vercel.app`
+2. **Backend** : Ouvrir `https://votre-backend.up.railway.app` → Doit afficher "Fullstack Blog API is running..."
+3. **Base de Données** : Vérifier la connexion via phpMyAdmin sur Railway
+4. **Test complet** : Se connecter sur `/login` et créer un article
+
+### URLs de Production
+
+```
+Frontend:  https://cyberangeldiary.vercel.app
+Backend:   https://votre-backend.up.railway.app
+Database:  containers-us-west-xxx.railway.app:xxxx (accès privé)
+```
 
 ---
 
@@ -900,8 +1051,8 @@ baseURL: 'https://votre-backend.onrender.com/api'
 
 ### Base URL
 ```
-Production: https://votre-backend.onrender.com/api
-Local: http://localhost:5000/api
+Production (Railway): https://votre-backend.up.railway.app/api
+Local (dev): http://localhost:5000/api
 ```
 
 ### Endpoints
@@ -1071,7 +1222,21 @@ backend/.env
 backend/node_modules/
 frontend/node_modules/
 frontend/build/
+.DS_Store
 ```
+
+### Outils Recommandés
+
+**Pour le Développement :**
+- [Visual Studio Code](https://code.visualstudio.com/) - Éditeur de code
+- [Postman](https://www.postman.com/) - Tester les API REST
+- [MySQL Workbench](https://www.mysql.com/products/workbench/) - Client MySQL graphique
+- [DBeaver](https://dbeaver.io/) - Alternative multi-DB
+
+**Pour le Déploiement :**
+- [Railway](https://railway.app) - Hébergement Backend + Database
+- [Vercel](https://vercel.com) - Hébergement Frontend
+- [GitHub](https://github.com) - Contrôle de version
 
 ### Ressources et Documentation
 
@@ -1081,6 +1246,8 @@ frontend/build/
 - [JWT.io](https://jwt.io/)
 - [Axios](https://axios-http.com/)
 - [React Router](https://reactrouter.com/)
+- [Railway Documentation](https://docs.railway.app/)
+- [Vercel Documentation](https://vercel.com/docs)
 
 ---
 
