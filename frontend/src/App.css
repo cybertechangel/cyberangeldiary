@@ -321,6 +321,7 @@ button[type="submit"]:hover {
     padding: 40px 20px;
     border-top: 1px solid #000000;
     background-color: #212121;
+    color: #ffffff;
 }
 
 .footer h3 {
@@ -328,7 +329,6 @@ button[type="submit"]:hover {
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 20px;
-    color: #ffffff;
     font-size: 1.5rem;
 }
 
@@ -342,16 +342,9 @@ button[type="submit"]:hover {
     color: #ffffff;
     font-size: 1.5rem;
     text-decoration: none;
-    transition: transform 0.2s ease-in-out;
 }
 
-.footer-social-links a:hover {
-    transform: scale(1.15);
-}
 
-.fa-beat {
-    --fa-animation-duration: 1.5s;
-}
 
 .not-found-card {
     border: 1px solid #888888;

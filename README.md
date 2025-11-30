@@ -1097,4 +1097,4 @@ Ce projet est à usage personnel et éducatif.
 
 ---
 
-**Dernière mise à jour** : Novembre 2024
+**Dernière mise à jour** : Novembre 2025
