@@ -3,7 +3,7 @@
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 
-## 📋 Table des Matières
+## ⊹ Table des Matières
 
 1. [Présentation du Projet](#présentation-du-projet)
 2. [Architecture Globale](#architecture-globale)
@@ -49,7 +49,7 @@
 
 ---
 
-## 🏗️ Architecture Globale
+## ⊹ Architecture Globale
 
 Le projet suit une architecture **client-serveur en trois tiers** séparant clairement les responsabilités :
 
@@ -100,7 +100,7 @@ Admin → Login → JWT Token → Protected Route → Create Article Form
 
 ---
 
-## 💻 Stack Technique
+## ⊹ Stack Technique
 
 ### Backend (Service Web)
 
@@ -134,7 +134,7 @@ Admin → Login → JWT Token → Protected Route → Create Article Form
 
 ---
 
-## 📁 Structure du Projet
+## ⊹ Structure du Projet
 
 ```
 cyberangeldiary/
@@ -203,12 +203,12 @@ cyberangeldiary/
 │   └── package.json                # Dépendances frontend
 │
 ├── .gitignore                      # Exclusions Git globales
-└── README.md                       # 📖 Documentation (ce fichier)
+└── README.md                       # Documentation (ce fichier)
 ```
 
 ---
 
-## 🔧 Backend - Service Web
+## ⊹ Backend - Service Web
 
 ### Architecture Backend
 
@@ -341,7 +341,7 @@ PORT=5000
 
 ---
 
-## 🎨 Frontend - Application React
+## ⊹ Frontend - Application React
 
 ### Architecture Frontend
 
@@ -597,7 +597,7 @@ SELECT * FROM admins WHERE username = ?;
 
 ---
 
-## 🔒 Sécurité
+## ⊹ Sécurité
 
 ### Mesures Implémentées
 
@@ -687,7 +687,7 @@ await db.query(sql, [category]);  // mysql2 échappe automatiquement
 
 ---
 
-## 🚀 Installation et Configuration
+## ⊹ Installation et Configuration
 
 ### Prérequis
 
@@ -896,7 +896,7 @@ baseURL: 'https://votre-backend.onrender.com/api'
 
 ---
 
-## 📡 API Documentation
+## ⊹ API Documentation
 
 ### Base URL
 ```
@@ -918,11 +918,11 @@ GET /articles
 [
   {
     "id": 1,
-    "title": "Tendances Fashion 2024",
+    "title": "Tendances Fashion 2025",
     "content": "Les tendances mode de cette année...",
-    "imageUrl": "https://example.com/image.jpg",
+    "imageUrl": "https://placehold.co/400",
     "category": "fashion",
-    "created_at": "2024-11-30T10:00:00.000Z"
+    "created_at": "2025-11-30T10:00:00.000Z"
   }
 ]
 ```
@@ -959,7 +959,7 @@ Content-Type: application/json
 {
   "title": "Nouveau Article",
   "content": "Contenu de l'article...",
-  "imageUrl": "https://example.com/image.jpg",
+  "imageUrl": "https://placehold.co/400",
   "category": "fashion"
 }
 ```
@@ -1048,7 +1048,7 @@ const response = await fetch('http://localhost:5000/api/articles', {
 
 ---
 
-## 📝 Notes Complémentaires
+## ⊹ Notes Complémentaires
 
 ### Scripts Utiles
 
@@ -1084,14 +1084,14 @@ frontend/build/
 
 ---
 
-## 👤 Auteur
+## ⊹ Auteur
 
 **CyberTechAngel**  
 GitHub: [@cybertechangel](https://github.com/cybertechangel)
 
 ---
 
-## 📄 Licence
+## ⊹ Licence
 
 Ce projet est à usage personnel et éducatif.
 
