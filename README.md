@@ -1,4 +1,4 @@
-# 🌸 CyberAngelDiary - Documentation Technique Complète
+# ⊹ CyberAngelDiary - Documentation Technique Complète
 
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
@@ -19,7 +19,7 @@
 
 ---
 
-## 🎀 Présentation du Projet
+## ⊹ Présentation du Projet
 
 **CyberAngelDiary** est un blog personnel fullstack aux thématiques "Fashion" et "Beauty", inspiré par l'esthétique Y2K/Tumblr. Le projet implémente une architecture moderne en trois couches (Frontend, Backend, Base de données) permettant la gestion et la consultation d'articles de blog.
 
@@ -32,14 +32,14 @@
 
 ### Fonctionnalités Principales
 
-#### 👥 Interface Publique
+#### ⊹ Interface Publique
 - **Page d'accueil** avec hero section animée
 - **Filtrage par catégories** : Fashion et Beauty
 - **Pagination** des articles (6 articles par page)
 - **Design responsive** adapté à tous les écrans
 - **Navigation intuitive** avec barre de navigation fixe
 
-#### 🔐 Interface d'Administration
+#### ⊹ Interface d'Administration
 - **Authentification sécurisée** via JWT
 - **Dashboard administrateur** protégé
 - **Création d'articles** avec formulaire complet
