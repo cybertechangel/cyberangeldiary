@@ -7,12 +7,6 @@ export const PAGINATION = {
     ARTICLES_PER_PAGE: 4,
 };
 
-export const MESSAGE_TYPES = {
-    SUCCESS: 'success',
-    ERROR: 'error',
-    INFO: 'info',
-};
-
 export const CATEGORIES = {
     FASHION: 'fashion',
     BEAUTY: 'beauty',
