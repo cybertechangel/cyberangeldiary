@@ -565,7 +565,7 @@ Après l'initialisation de la base de données, un compte admin est créé :
 - **Username** : `admin`
 - **Password** : `password`
 
-⚠️ **Important** : Changez ce mot de passe en production !
+**Important** : Changez ce mot de passe en production !
 
 ---
 
